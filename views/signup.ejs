@@ -1,0 +1,72 @@
+<%- include('./layouts/header') %>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">⚡</div>
+      <h2 class="auth-title">Create Your Account</h2>
+      <p class="auth-subtitle">Join the sports community to schedule and play matches</p>
+    </div>
+
+    <form action="/auth/signup" method="POST" class="auth-form" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label for="name" class="form-label">Full Name</label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          class="form-control" 
+          placeholder="e.g. Alex Morgan" 
+          required 
+          autocomplete="name"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          class="form-control" 
+          placeholder="name@example.com" 
+          required 
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="form-control" 
+          placeholder="At least 6 characters" 
+          required 
+          autocomplete="new-password"
+        >
+        <small class="form-text">Must be at least 6 characters long.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="role" class="form-label">Account Role</label>
+        <select id="role" name="role" class="form-select">
+          <option value="player" selected>Player (Create, Join, and Cancel Matches)</option>
+          <option value="admin">Administrator (Manage Sports, View Analytics & Play)</option>
+        </select>
+        <small class="form-text">Select Administrator if evaluating admin privileges.</small>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Create Account</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a href="/auth/login" class="link-primary">Sign in here</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('./layouts/footer') %>

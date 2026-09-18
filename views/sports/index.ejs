@@ -1,0 +1,59 @@
+<%- include('../layouts/header') %>
+
+<div class="page-header-flex">
+  <div>
+    <h1 class="page-title">Sports Catalog</h1>
+    <p class="page-subtitle">Browse all supported sports and discover active leagues</p>
+  </div>
+  <% if (user && user.role === 'admin') { %>
+    <a href="/sports/new" class="btn btn-primary">+ Add New Sport</a>
+  <% } %>
+</div>
+
+<% if (sports.length === 0) { %>
+  <div class="empty-state-card">
+    <div class="empty-state-icon">🏅</div>
+    <h3>No Sports Configured</h3>
+    <p>There are currently no sports registered in the system.</p>
+    <% if (user && user.role === 'admin') { %>
+      <a href="/sports/new" class="btn btn-primary mt-3">+ Add First Sport</a>
+    <% } %>
+  </div>
+<% } else { %>
+  <div class="sports-grid">
+    <% sports.forEach(function(sport) { %>
+      <div class="sport-card">
+        <div class="sport-card-header">
+          <div class="sport-icon-circle">🏅</div>
+          <div>
+            <h3 class="sport-name"><%= sport.sportName %></h3>
+            <span class="text-xs text-muted">Created by <%= sport.creator ? sport.creator.name : 'Administrator' %></span>
+          </div>
+        </div>
+
+        <p class="sport-description">
+          <%= sport.description || 'No specific description provided for this sport.' %>
+        </p>
+
+        <div class="sport-card-footer">
+          <div class="sport-stats-badge">
+            <strong><%= sport.sessions ? sport.sessions.length : 0 %></strong> Sessions
+          </div>
+
+          <div class="sport-card-actions">
+            <% if (user && user.role === 'admin') { %>
+              <a href="/sports/<%= sport.id %>/edit" class="btn btn-outline btn-xs">Edit</a>
+              <form action="/sports/<%= sport.id %>/delete" method="POST" class="inline-form" onsubmit="return confirm('Are you sure you want to delete <%= sport.sportName %>? Associated sessions may also be affected.')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+              </form>
+            <% } %>
+            <a href="/sessions/new?sportId=<%= sport.id %>" class="btn btn-primary btn-xs">Schedule Match</a>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<%- include('../layouts/footer') %>

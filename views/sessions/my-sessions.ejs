@@ -1,0 +1,114 @@
+<%- include('../layouts/header') %>
+
+<div class="page-header-flex">
+  <div>
+    <h1 class="page-title">My Created Sessions</h1>
+    <p class="page-subtitle">Matches you have organized and hosted</p>
+  </div>
+  <a href="/sessions/new" class="btn btn-primary">+ Schedule Another Match</a>
+</div>
+
+<% if (sessions.length === 0) { %>
+  <div class="empty-state-card">
+    <div class="empty-state-icon">📋</div>
+    <h3>No Matches Created Yet</h3>
+    <p>You haven't scheduled any sports sessions yet. Get your team together and host one!</p>
+    <a href="/sessions/new" class="btn btn-primary mt-3">+ Schedule First Match</a>
+  </div>
+<% } else { %>
+  <div class="sessions-list">
+    <% sessions.forEach(function(session) { %>
+      <div class="session-strip <%= session.status === 'cancelled' ? 'strip-cancelled' : '' %>">
+        <div class="strip-main">
+          <div class="strip-header">
+            <span class="sport-pill"><%= session.sport ? session.sport.sportName : 'Sport' %></span>
+            <% if (session.status === 'cancelled') { %>
+              <span class="badge badge-cancelled">Cancelled</span>
+            <% } else { %>
+              <span class="badge badge-active">Active</span>
+            <% } %>
+          </div>
+
+          <h3 class="strip-title">
+            <a href="/sessions/<%= session.id %>"><%= session.sessionTitle %></a>
+          </h3>
+
+          <div class="strip-meta">
+            <span>📍 <%= session.venue %></span>
+            <span>📅 <%= formatDate(session.sessionDate) %> at <%= session.sessionTime %></span>
+            <span>👥 <%= session.participants ? session.participants.length : 0 %> Joined Participants</span>
+            <span>🎟️ <%= session.additionalPlayersNeeded %> Slots Left</span>
+          </div>
+
+          <% if (session.status === 'cancelled') { %>
+            <div class="cancellation-callout">
+              <strong>Cancellation Reason:</strong> <%= session.cancellationReason %>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="strip-actions">
+          <a href="/sessions/<%= session.id %>" class="btn btn-outline btn-sm">View Details</a>
+
+          <% if (session.status === 'active') { %>
+            <button 
+              type="button" 
+              class="btn btn-danger btn-sm" 
+              onclick="openCancelModal('<%= session.id %>', '<%= session.sessionTitle.replace(/'/g, '\\\'') %>')"
+            >
+              Cancel Match
+            </button>
+          <% } %>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<!-- Cancellation Modal -->
+<div id="cancelModal" class="modal-overlay" style="display: none;">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modalSessionTitle">Cancel Sports Session</h3>
+      <button type="button" class="modal-close" onclick="closeCancelModal()">&times;</button>
+    </div>
+    <form id="cancelForm" action="" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="modal-body">
+        <p class="text-muted mb-3">Please provide a mandatory reason for cancelling this match. This reason will be displayed to all participants.</p>
+        <div class="form-group">
+          <label for="cancellationReason" class="form-label">Cancellation Reason <span class="required">*</span></label>
+          <textarea 
+            id="cancellationReason" 
+            name="cancellationReason" 
+            class="form-control" 
+            rows="3" 
+            placeholder="e.g. Bad weather, venue maintenance, insufficient attendance..." 
+            required
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeCancelModal()">Keep Session</button>
+        <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openCancelModal(sessionId, title) {
+    const modal = document.getElementById('cancelModal');
+    const form = document.getElementById('cancelForm');
+    const titleElem = document.getElementById('modalSessionTitle');
+    form.action = '/sessions/' + sessionId + '/cancel';
+    titleElem.textContent = 'Cancel: ' + title;
+    modal.style.display = 'flex';
+  }
+
+  function closeCancelModal() {
+    document.getElementById('cancelModal').style.display = 'none';
+  }
+</script>
+
+<%- include('../layouts/footer') %>

@@ -1,0 +1,165 @@
+<%- include('../layouts/header') %>
+
+<div class="page-header-flex">
+  <div>
+    <div class="report-badge-top">
+      <span class="badge badge-admin">ADMINISTRATOR ACCESS</span>
+    </div>
+    <h1 class="page-title">Sports Reporting & Analytics Dashboard</h1>
+    <p class="page-subtitle">Inspect session engagement, sport popularity, and participation trends</p>
+  </div>
+</div>
+
+<!-- Date Range Filter Card -->
+<div class="filter-card">
+  <form action="/reports" method="GET" class="filter-form">
+    <div class="filter-inputs">
+      <div class="filter-group">
+        <label for="startDate" class="filter-label">Start Date</label>
+        <input 
+          type="date" 
+          id="startDate" 
+          name="startDate" 
+          class="form-control" 
+          value="<%= filters.startDate %>"
+        >
+      </div>
+
+      <div class="filter-group">
+        <label for="endDate" class="filter-label">End Date</label>
+        <input 
+          type="date" 
+          id="endDate" 
+          name="endDate" 
+          class="form-control" 
+          value="<%= filters.endDate %>"
+        >
+      </div>
+
+      <div class="filter-buttons">
+        <button type="submit" class="btn btn-primary">Filter Reports</button>
+        <% if (filters.startDate || filters.endDate) { %>
+          <a href="/reports" class="btn btn-outline">Reset Filter</a>
+        <% } %>
+      </div>
+    </div>
+  </form>
+
+  <% if (filters.startDate || filters.endDate) { %>
+    <div class="active-filter-indicator">
+      <span>Filtering data from <strong><%= filters.startDate || 'Any' %></strong> to <strong><%= filters.endDate || 'Any' %></strong></span>
+    </div>
+  <% } %>
+</div>
+
+<!-- Summary Metrics Cards -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-blue">📈</div>
+    <div class="stat-info">
+      <div class="stat-value"><%= totalSessions %></div>
+      <div class="stat-label">Total Sessions</div>
+      <small class="text-xs text-muted">(All-time: <%= allTimeTotalSessions %>)</small>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-emerald">⚡</div>
+    <div class="stat-info">
+      <div class="stat-value"><%= activeSessions %></div>
+      <div class="stat-label">Active Sessions</div>
+      <small class="text-xs text-muted">Ready to play or scheduled</small>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-red">🚫</div>
+    <div class="stat-info">
+      <div class="stat-value"><%= cancelledSessions %></div>
+      <div class="stat-label">Cancelled Sessions</div>
+      <small class="text-xs text-muted">With mandatory reason logged</small>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon stat-icon-purple">👥</div>
+    <div class="stat-info">
+      <div class="stat-value"><%= totalParticipants %></div>
+      <div class="stat-label">Total Player Joins</div>
+      <small class="text-xs text-muted">Active community participants</small>
+    </div>
+  </div>
+</div>
+
+<!-- Most Popular Sports & Sports Breakdown Table -->
+<div class="report-table-card">
+  <div class="table-card-header">
+    <div>
+      <h2>Sessions & Popularity by Sport Category</h2>
+      <p class="text-sm text-muted">Ranked by player participation and match frequency</p>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Sport Category</th>
+          <th>Total Matches</th>
+          <th>Active Matches</th>
+          <th>Cancelled Matches</th>
+          <th>Player Participants</th>
+          <th>Popularity Share</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (sportsStats.length === 0) { %>
+          <tr>
+            <td colspan="7" class="text-center py-4">No sports data available.</td>
+          </tr>
+        <% } else { %>
+          <% sportsStats.forEach(function(stat, index) { %>
+            <tr>
+              <td>
+                <span class="rank-circle <%= index === 0 ? 'rank-first' : (index === 1 ? 'rank-second' : (index === 2 ? 'rank-third' : '')) %>">
+                  #<%= index + 1 %>
+                </span>
+              </td>
+              <td>
+                <strong><%= stat.sportName %></strong>
+              </td>
+              <td><%= stat.totalSessions %></td>
+              <td>
+                <span class="badge badge-active"><%= stat.activeSessions %> Active</span>
+              </td>
+              <td>
+                <% if (stat.cancelledSessions > 0) { %>
+                  <span class="badge badge-cancelled"><%= stat.cancelledSessions %> Cancelled</span>
+                <% } else { %>
+                  <span class="text-muted">0</span>
+                <% } %>
+              </td>
+              <td>
+                <span class="badge badge-joined"><%= stat.totalParticipants %> Joined</span>
+              </td>
+              <td>
+                <% 
+                  const share = totalSessions > 0 
+                    ? Math.round((stat.totalSessions / totalSessions) * 100) 
+                    : 0;
+                %>
+                <div class="progress-bar-container">
+                  <div class="progress-bar-fill" style="width: <%= share %>%;"></div>
+                  <span class="progress-text"><%= share %>%</span>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

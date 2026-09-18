@@ -1,0 +1,67 @@
+<%- include('../layouts/header') %>
+
+<div class="page-header-flex">
+  <div>
+    <h1 class="page-title">My Joined Sessions</h1>
+    <p class="page-subtitle">Matches and pickup games you are registered to participate in</p>
+  </div>
+  <a href="/sessions/available" class="btn btn-outline">Find More Matches</a>
+</div>
+
+<% if (sessions.length === 0) { %>
+  <div class="empty-state-card">
+    <div class="empty-state-icon">🤝</div>
+    <h3>No Joined Matches Yet</h3>
+    <p>You haven't joined any sports sessions yet. Check available games and claim your spot!</p>
+    <a href="/sessions/available" class="btn btn-primary mt-3">Browse Available Matches</a>
+  </div>
+<% } else { %>
+  <div class="sessions-grid">
+    <% sessions.forEach(function(session) { %>
+      <div class="session-card <%= session.status === 'cancelled' ? 'card-cancelled' : '' %>">
+        <div class="session-card-header">
+          <span class="sport-pill"><%= session.sport ? session.sport.sportName : 'Sport' %></span>
+          <% if (session.status === 'cancelled') { %>
+            <span class="badge badge-cancelled">Cancelled</span>
+          <% } else { %>
+            <span class="badge badge-joined">Registered ✓</span>
+          <% } %>
+        </div>
+
+        <h3 class="session-card-title">
+          <a href="/sessions/<%= session.id %>"><%= session.sessionTitle %></a>
+        </h3>
+
+        <div class="session-meta">
+          <div class="meta-item">
+            <span class="meta-icon">📍</span>
+            <span><%= session.venue %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">📅</span>
+            <span><%= formatDate(session.sessionDate) %> at <%= session.sessionTime %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">👤</span>
+            <span>Organized by <%= session.creator ? session.creator.name : 'Unknown' %></span>
+          </div>
+        </div>
+
+        <% if (session.status === 'cancelled') { %>
+          <div class="cancellation-callout">
+            <strong>Match Cancelled:</strong> <%= session.cancellationReason %>
+          </div>
+        <% } %>
+
+        <div class="session-card-footer">
+          <span class="text-sm text-muted">
+            <%= session.participants ? session.participants.length : 0 %> Confirmed Players
+          </span>
+          <a href="/sessions/<%= session.id %>" class="btn btn-primary btn-sm">View Match Details &rarr;</a>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<%- include('../layouts/footer') %>

@@ -1,0 +1,68 @@
+<%- include('./layouts/header') %>
+
+<section class="hero-section">
+  <div class="hero-badge">⚽ Built for Athletes, Teams & Organizers</div>
+  <h1 class="hero-title">Elevate Your Game With Seamless Sports Scheduling</h1>
+  <p class="hero-subtitle">
+    Create pickup matches, coordinate teams, discover open sessions in your favorite sports, 
+    and manage player rosters effortlessly.
+  </p>
+  <div class="hero-cta">
+    <% if (user) { %>
+      <a href="/dashboard" class="btn btn-primary btn-lg">Go to Dashboard &rarr;</a>
+      <a href="/sessions/available" class="btn btn-outline btn-lg">Browse Available Sessions</a>
+    <% } else { %>
+      <a href="/auth/signup" class="btn btn-primary btn-lg">Get Started Free &rarr;</a>
+      <a href="/auth/login" class="btn btn-outline btn-lg">Sign In to Your Account</a>
+    <% } %>
+  </div>
+</section>
+
+<section class="features-grid">
+  <div class="feature-card">
+    <div class="feature-icon">🏆</div>
+    <h3 class="feature-title">Multi-Sport Management</h3>
+    <p class="feature-text">Administrators configure verified sports categories—from Football and Cricket to Basketball, Volleyball, and Badminton.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon">📅</div>
+    <h3 class="feature-title">Dynamic Session Scheduling</h3>
+    <p class="feature-text">Schedule matches with designated venues, date/time, preset team rosters, and exact additional player slots needed.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon">🤝</div>
+    <h3 class="feature-title">Instant Match Participation</h3>
+    <p class="feature-text">Players join open sessions in one click. Slots update in real time and user names appear directly on match rosters.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon">📊</div>
+    <h3 class="feature-title">Comprehensive Reporting</h3>
+    <p class="feature-text">Admins access actionable analytics including total match counts, popularity metrics, and customizable date range breakdowns.</p>
+  </div>
+</section>
+
+<div class="demo-accounts-card">
+  <div class="demo-header">
+    <h3>Quick Demo Access Credentials</h3>
+    <p>Use these pre-seeded accounts to experience the full platform immediately:</p>
+  </div>
+  <div class="demo-grid">
+    <div class="demo-box">
+      <span class="badge badge-admin">ADMINISTRATOR</span>
+      <p><strong>Email:</strong> admin@sportsscheduler.com</p>
+      <p><strong>Password:</strong> AdminPassword123!</p>
+      <p class="demo-note">Full sports CRUD, reporting analytics, plus all player features.</p>
+    </div>
+    <div class="demo-box">
+      <span class="badge badge-player">PLAYER</span>
+      <p><strong>Email:</strong> alice@example.com</p>
+      <p><strong>Password:</strong> PlayerPassword123!</p>
+      <p class="demo-note">Schedule matches, join available games, manage created sessions.</p>
+    </div>
+  </div>
+</div>
+
+<%- include('./layouts/footer') %>

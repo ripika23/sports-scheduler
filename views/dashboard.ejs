@@ -1,0 +1,115 @@
+<%- include('./layouts/header') %>
+
+<div class="dashboard-header">
+  <div>
+    <div class="user-greeting">
+      <h1>Hello, <%= user.name %>!</h1>
+      <span class="badge badge-<%= user.role === 'admin' ? 'admin' : 'player' %>"><%= user.role.toUpperCase() %></span>
+    </div>
+    <p class="text-muted">Welcome to your sports scheduling command center.</p>
+  </div>
+  <div class="dashboard-actions">
+    <a href="/sessions/new" class="btn btn-primary">+ Schedule Match</a>
+    <a href="/sessions/available" class="btn btn-outline">Find Matches</a>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <a href="/sessions/available" class="stat-card">
+    <div class="stat-icon stat-icon-emerald">⚽</div>
+    <div class="stat-info">
+      <div class="stat-value"><%= stats.availableCount %></div>
+      <div class="stat-label">Available Sessions</div>
+    </div>
+  </a>
+
+  <a href="/sessions/my-sessions" class="stat-card">
+    <div class="stat-icon stat-icon-blue">📋</div>
+    <div class="stat-info">
+      <div class="stat-value"><%= stats.createdCount %></div>
+      <div class="stat-label">My Created Sessions</div>
+    </div>
+  </a>
+
+  <a href="/sessions/joined" class="stat-card">
+    <div class="stat-icon stat-icon-purple">🤝</div>
+    <div class="stat-info">
+      <div class="stat-value"><%= stats.joinedCount %></div>
+      <div class="stat-label">Joined Sessions</div>
+    </div>
+  </a>
+
+  <a href="/sports" class="stat-card">
+    <div class="stat-icon stat-icon-amber">🏅</div>
+    <div class="stat-info">
+      <div class="stat-value"><%= stats.sportsCount %></div>
+      <div class="stat-label">Sports Categories</div>
+    </div>
+  </a>
+</div>
+
+<% if (user.role === 'admin') { %>
+  <div class="admin-banner-card">
+    <div class="admin-banner-content">
+      <div class="admin-banner-icon">⚙️</div>
+      <div>
+        <h3>Administrator Tools</h3>
+        <p>You have full administrative privileges to curate sports categories and inspect analytics across the entire platform.</p>
+      </div>
+    </div>
+    <div class="admin-banner-actions">
+      <a href="/sports/new" class="btn btn-sm btn-white">+ Add Sport</a>
+      <a href="/sports" class="btn btn-sm btn-outline-white">Manage Sports</a>
+      <a href="/reports" class="btn btn-sm btn-outline-white">Reporting Dashboard</a>
+    </div>
+  </div>
+<% } %>
+
+<div class="section-container">
+  <div class="section-header">
+    <h2>Upcoming Open Sessions</h2>
+    <a href="/sessions/available" class="link-primary">View All Available &rarr;</a>
+  </div>
+
+  <% if (upcomingSessions.length === 0) { %>
+    <div class="empty-state-card">
+      <div class="empty-state-icon">🏟️</div>
+      <h3>No upcoming sessions right now</h3>
+      <p>Be the first player to schedule a match for your community!</p>
+      <a href="/sessions/new" class="btn btn-primary mt-3">+ Schedule First Match</a>
+    </div>
+  <% } else { %>
+    <div class="sessions-grid">
+      <% upcomingSessions.forEach(function(session) { %>
+        <div class="session-card">
+          <div class="session-card-header">
+            <span class="sport-pill"><%= session.sport ? session.sport.sportName : 'Sport' %></span>
+            <span class="badge badge-active">Active</span>
+          </div>
+          <h3 class="session-card-title">
+            <a href="/sessions/<%= session.id %>"><%= session.sessionTitle %></a>
+          </h3>
+          <div class="session-meta">
+            <div class="meta-item">
+              <span class="meta-icon">📍</span>
+              <span><%= session.venue %></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">📅</span>
+              <span><%= formatDate(session.sessionDate) %> at <%= session.sessionTime %></span>
+            </div>
+          </div>
+          <div class="session-card-footer">
+            <div class="slots-info">
+              <span class="slots-count"><%= session.additionalPlayersNeeded %></span>
+              <span class="slots-label">slots left</span>
+            </div>
+            <a href="/sessions/<%= session.id %>" class="btn btn-outline btn-sm">View Details &rarr;</a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('./layouts/footer') %>

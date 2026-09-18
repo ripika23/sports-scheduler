@@ -1,0 +1,39 @@
+<%- include('./layouts/header') %>
+
+<div class="profile-container">
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar-large">
+        <%= user.name.charAt(0).toUpperCase() %>
+      </div>
+      <div class="profile-details">
+        <h2><%= user.name %></h2>
+        <p class="text-muted"><%= user.email %></p>
+        <span class="badge badge-<%= user.role === 'admin' ? 'admin' : 'player' %>"><%= user.role.toUpperCase() %></span>
+      </div>
+    </div>
+
+    <div class="profile-stats-row">
+      <div class="profile-stat-box">
+        <div class="stat-number"><%= stats.createdCount %></div>
+        <div class="stat-title">Sessions Organized</div>
+      </div>
+      <div class="profile-stat-box">
+        <div class="stat-number"><%= stats.joinedCount %></div>
+        <div class="stat-title">Sessions Joined</div>
+      </div>
+      <div class="profile-stat-box">
+        <div class="stat-number"><%= new Date(user.createdAt).toLocaleDateString() %></div>
+        <div class="stat-title">Member Since</div>
+      </div>
+    </div>
+
+    <div class="profile-actions-row">
+      <a href="/sessions/my-sessions" class="btn btn-outline">My Organized Sessions</a>
+      <a href="/sessions/joined" class="btn btn-outline">My Joined Sessions</a>
+      <a href="/sessions/new" class="btn btn-primary">+ Schedule New Match</a>
+    </div>
+  </div>
+</div>
+
+<%- include('./layouts/footer') %>

@@ -1,0 +1,44 @@
+<%- include('../layouts/header') %>
+
+<div class="form-page-container">
+  <div class="form-card">
+    <div class="form-header">
+      <a href="/sports" class="back-link">&larr; Back to Sports Catalog</a>
+      <h1 class="form-title">Edit Sport: <%= sport.sportName %></h1>
+      <p class="form-subtitle">Update information and description for this sport</p>
+    </div>
+
+    <form action="/sports/<%= sport.id %>" method="POST" class="standard-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label for="sportName" class="form-label">Sport Name <span class="required">*</span></label>
+        <input 
+          type="text" 
+          id="sportName" 
+          name="sportName" 
+          class="form-control" 
+          value="<%= sport.sportName %>" 
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="form-label">Sport Description</label>
+        <textarea 
+          id="description" 
+          name="description" 
+          class="form-control" 
+          rows="4"
+        ><%= sport.description || '' %></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg">Update Sport</button>
+        <a href="/sports" class="btn btn-outline btn-lg">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../layouts/footer') %>

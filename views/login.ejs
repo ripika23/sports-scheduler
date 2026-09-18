@@ -1,0 +1,71 @@
+<%- include('./layouts/header') %>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">⚡</div>
+      <h2 class="auth-title">Welcome Back</h2>
+      <p class="auth-subtitle">Sign in to your Sports Scheduler account</p>
+    </div>
+
+    <form action="/auth/login" method="POST" class="auth-form" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          class="form-control" 
+          placeholder="name@example.com" 
+          required 
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="form-control" 
+          placeholder="••••••••" 
+          required 
+          autocomplete="current-password"
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Sign In</button>
+    </form>
+
+    <div class="quick-fill-section">
+      <p class="quick-fill-label">Instant Demo Credentials:</p>
+      <div class="quick-fill-buttons">
+        <button type="button" class="btn btn-sm btn-outline" onclick="fillCredentials('admin@sportsscheduler.com', 'AdminPassword123!')">
+          Fill Admin
+        </button>
+        <button type="button" class="btn btn-sm btn-outline" onclick="fillCredentials('alice@example.com', 'PlayerPassword123!')">
+          Fill Player (Alice)
+        </button>
+        <button type="button" class="btn btn-sm btn-outline" onclick="fillCredentials('bob@example.com', 'PlayerPassword123!')">
+          Fill Player (Bob)
+        </button>
+      </div>
+    </div>
+
+    <div class="auth-footer">
+      <p>Don't have an account yet? <a href="/auth/signup" class="link-primary">Sign up now</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function fillCredentials(email, password) {
+    document.getElementById('email').value = email;
+    document.getElementById('password').value = password;
+  }
+</script>
+
+<%- include('./layouts/footer') %>

@@ -1,0 +1,220 @@
+<%- include('../layouts/header') %>
+
+<div class="session-detail-container">
+  <div class="detail-header-card">
+    <div class="detail-top-bar">
+      <a href="/sessions/available" class="back-link">&larr; Back to Available Sessions</a>
+      <div class="header-badges">
+        <span class="sport-pill-lg"><%= session.sport ? session.sport.sportName : 'Sport' %></span>
+        <% if (session.status === 'cancelled') { %>
+          <span class="badge badge-cancelled-lg">CANCELLED</span>
+        <% } else if (isPast) { %>
+          <span class="badge badge-past-lg">PAST MATCH</span>
+        <% } else if (isFull) { %>
+          <span class="badge badge-full-lg">FULL (NO SLOTS)</span>
+        <% } else { %>
+          <span class="badge badge-active-lg">ACTIVE MATCH</span>
+        <% } %>
+      </div>
+    </div>
+
+    <h1 class="session-title-main"><%= session.sessionTitle %></h1>
+
+    <div class="session-info-grid">
+      <div class="info-cell">
+        <span class="cell-label">VENUE</span>
+        <span class="cell-value">📍 <%= session.venue %></span>
+      </div>
+      <div class="info-cell">
+        <span class="cell-label">DATE & TIME</span>
+        <span class="cell-value">📅 <%= formatDate(session.sessionDate) %> at <%= session.sessionTime %></span>
+      </div>
+      <div class="info-cell">
+        <span class="cell-label">ORGANIZER</span>
+        <span class="cell-value">👤 <%= session.creator ? session.creator.name : 'Unknown' %></span>
+      </div>
+      <div class="info-cell">
+        <span class="cell-label">OPEN SLOTS REMAINING</span>
+        <span class="cell-value slots-highlight"><%= session.additionalPlayersNeeded %></span>
+      </div>
+    </div>
+
+    <% if (session.status === 'cancelled') { %>
+      <div class="cancellation-alert-banner">
+        <div class="cancel-banner-icon">⚠️</div>
+        <div>
+          <h4>This Match Has Been Cancelled By The Host</h4>
+          <p class="cancel-reason-text"><strong>Reason:</strong> <%= session.cancellationReason %></p>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="detail-action-bar">
+      <% if (session.status === 'active') { %>
+        <% if (isCreator) { %>
+          <div class="action-status-note">
+            <span>You organized this session.</span>
+          </div>
+          <button 
+            type="button" 
+            class="btn btn-danger" 
+            onclick="openCancelModal()"
+          >
+            Cancel This Match
+          </button>
+        <% } else if (hasJoined) { %>
+          <div class="joined-status-banner">
+            <span class="check-icon">✓</span> You are confirmed on the roster for this session!
+          </div>
+        <% } else if (isPast) { %>
+          <div class="status-warning-banner">
+            This match is in the past and cannot be joined.
+          </div>
+        <% } else if (isFull) { %>
+          <div class="status-warning-banner">
+            This session is full. All available slots have been filled.
+          </div>
+        <% } else { %>
+          <form action="/sessions/<%= session.id %>/join" method="POST" class="inline-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn-success btn-lg">
+              Join This Match (1 of <%= session.additionalPlayersNeeded %> slots left)
+            </button>
+          </form>
+        <% } %>
+      <% } else { %>
+        <div class="status-cancelled-banner">
+          This session was cancelled and is no longer accepting players.
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="teams-grid-container">
+    <div class="team-card">
+      <div class="team-header team-a-header">
+        <h3>Team A</h3>
+        <span class="team-tag">Side 1</span>
+      </div>
+      <div class="team-body">
+        <% 
+          const teamAPlayersList = session.teamAPlayers 
+            ? session.teamAPlayers.split(',').map(s => s.trim()).filter(Boolean) 
+            : [];
+        %>
+        <% if (teamAPlayersList.length === 0) { %>
+          <p class="text-muted">No confirmed players listed yet.</p>
+        <% } else { %>
+          <ul class="player-roster-list">
+            <% teamAPlayersList.forEach(function(player) { %>
+              <li class="player-item">
+                <span class="player-dot"></span>
+                <span><%= player %></span>
+              </li>
+            <% }); %>
+          </ul>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="team-card">
+      <div class="team-header team-b-header">
+        <h3>Team B</h3>
+        <span class="team-tag">Side 2</span>
+      </div>
+      <div class="team-body">
+        <% 
+          const teamBPlayersList = session.teamBPlayers 
+            ? session.teamBPlayers.split(',').map(s => s.trim()).filter(Boolean) 
+            : [];
+        %>
+        <% if (teamBPlayersList.length === 0) { %>
+          <p class="text-muted">No confirmed players listed yet.</p>
+        <% } else { %>
+          <ul class="player-roster-list">
+            <% teamBPlayersList.forEach(function(player) { %>
+              <li class="player-item">
+                <span class="player-dot"></span>
+                <span><%= player %></span>
+              </li>
+            <% }); %>
+          </ul>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="participants-card">
+    <div class="card-header-clean">
+      <h2>Registered Participants (<%= session.participants ? session.participants.length : 0 %>)</h2>
+      <p class="text-sm text-muted">Community players who joined this match:</p>
+    </div>
+
+    <% if (!session.participants || session.participants.length === 0) { %>
+      <div class="empty-participants">
+        <p>No community members have joined yet. Be the first to join!</p>
+      </div>
+    <% } else { %>
+      <div class="participants-grid">
+        <% session.participants.forEach(function(participant) { %>
+          <div class="participant-badge-card">
+            <div class="participant-avatar">
+              <%= participant.user ? participant.user.name.charAt(0).toUpperCase() : '?' %>
+            </div>
+            <div class="participant-info">
+              <span class="participant-name"><%= participant.user ? participant.user.name : 'Unknown User' %></span>
+              <span class="participant-time">Joined <%= new Date(participant.createdAt).toLocaleDateString() %></span>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<% if (isCreator && session.status === 'active') { %>
+  <!-- Cancellation Modal -->
+  <div id="cancelModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Cancel Sports Session</h3>
+        <button type="button" class="modal-close" onclick="closeCancelModal()">&times;</button>
+      </div>
+      <form action="/sessions/<%= session.id %>/cancel" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="modal-body">
+          <p class="text-muted mb-3">
+            Please enter the mandatory reason for cancelling <strong>"<%= session.sessionTitle %>"</strong>.
+            This reason will be visible to all registered participants.
+          </p>
+          <div class="form-group">
+            <label for="cancellationReason" class="form-label">Cancellation Reason <span class="required">*</span></label>
+            <textarea 
+              id="cancellationReason" 
+              name="cancellationReason" 
+              class="form-control" 
+              rows="3" 
+              placeholder="e.g. Inclement weather, venue booking cancelled..." 
+              required
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeCancelModal()">Keep Match</button>
+          <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openCancelModal() {
+      document.getElementById('cancelModal').style.display = 'flex';
+    }
+    function closeCancelModal() {
+      document.getElementById('cancelModal').style.display = 'none';
+    }
+  </script>
+<% } %>
+
+<%- include('../layouts/footer') %>

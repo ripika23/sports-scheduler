@@ -1,0 +1,23 @@
+<% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+  <div class="alert alert-success" role="alert">
+    <div class="alert-icon">✓</div>
+    <div class="alert-content">
+      <% success_msg.forEach(function(msg) { %>
+        <p><%= msg %></p>
+      <% }); %>
+    </div>
+    <button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Close">&times;</button>
+  </div>
+<% } %>
+
+<% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+  <div class="alert alert-danger" role="alert">
+    <div class="alert-icon">⚠</div>
+    <div class="alert-content">
+      <% error_msg.forEach(function(msg) { %>
+        <p><%= msg %></p>
+      <% }); %>
+    </div>
+    <button type="button" class="alert-close" onclick="this.parentElement.remove()" aria-label="Close">&times;</button>
+  </div>
+<% } %>

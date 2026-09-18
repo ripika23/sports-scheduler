@@ -1,0 +1,77 @@
+<%- include('../layouts/header') %>
+
+<div class="page-header-flex">
+  <div>
+    <h1 class="page-title">Available Sessions</h1>
+    <p class="page-subtitle">Discover upcoming matches seeking additional players</p>
+  </div>
+  <a href="/sessions/new" class="btn btn-primary">+ Schedule New Session</a>
+</div>
+
+<% if (sessions.length === 0) { %>
+  <div class="empty-state-card">
+    <div class="empty-state-icon">⚽</div>
+    <h3>No Available Sessions</h3>
+    <p>There are currently no upcoming open sessions looking for players.</p>
+    <a href="/sessions/new" class="btn btn-primary mt-3">Be the First to Schedule</a>
+  </div>
+<% } else { %>
+  <div class="sessions-grid">
+    <% sessions.forEach(function(session) { %>
+      <div class="session-card">
+        <div class="session-card-header">
+          <span class="sport-pill"><%= session.sport ? session.sport.sportName : 'Sport' %></span>
+          <span class="badge badge-active">Open Match</span>
+        </div>
+
+        <h3 class="session-card-title">
+          <a href="/sessions/<%= session.id %>"><%= session.sessionTitle %></a>
+        </h3>
+
+        <div class="session-meta">
+          <div class="meta-item">
+            <span class="meta-icon">📍</span>
+            <span><%= session.venue %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">📅</span>
+            <span><%= formatDate(session.sessionDate) %> at <%= session.sessionTime %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">👤</span>
+            <span>Organized by <%= session.creator ? session.creator.name : 'Unknown' %></span>
+          </div>
+        </div>
+
+        <div class="session-roster-preview">
+          <div class="roster-label">Current Participants: <%= session.participants ? session.participants.length : 0 %></div>
+        </div>
+
+        <div class="session-card-footer">
+          <div class="slots-info">
+            <span class="slots-count"><%= session.additionalPlayersNeeded %></span>
+            <span class="slots-label">slots remaining</span>
+          </div>
+
+          <div class="session-card-actions">
+            <% if (session.creatorId === user.id) { %>
+              <span class="badge badge-organizer">Your Match</span>
+              <a href="/sessions/<%= session.id %>" class="btn btn-outline btn-sm">Manage</a>
+            <% } else if (joinedSessionIds.has(session.id)) { %>
+              <span class="badge badge-joined">Joined ✓</span>
+              <a href="/sessions/<%= session.id %>" class="btn btn-outline btn-sm">View</a>
+            <% } else { %>
+              <form action="/sessions/<%= session.id %>/join" method="POST" class="inline-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-success btn-sm">Join Match</button>
+              </form>
+              <a href="/sessions/<%= session.id %>" class="btn btn-outline btn-sm">Details</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<%- include('../layouts/footer') %>

@@ -1,0 +1,15 @@
+<%- include('./layouts/header') %>
+
+<div class="error-container">
+  <div class="error-card">
+    <div class="error-badge"><%= title || 'Error' %></div>
+    <h1 class="error-heading"><%= title || 'An error occurred' %></h1>
+    <p class="error-description"><%= message %></p>
+    <div class="error-actions">
+      <a href="<%= user ? '/dashboard' : '/' %>" class="btn btn-primary">Return to <%= user ? 'Dashboard' : 'Home' %></a>
+      <a href="javascript:history.back()" class="btn btn-outline">Go Back</a>
+    </div>
+  </div>
+</div>
+
+<%- include('./layouts/footer') %>

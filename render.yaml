@@ -1,0 +1,29 @@
+services:
+  # Web Application Service
+  - type: web
+    name: sports-scheduler
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: node scripts/migrate.js && node scripts/seed.js && node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sports-scheduler-db
+          property: connectionString
+
+databases:
+  # Managed PostgreSQL Database
+  - name: sports-scheduler-db
+    databaseName: sports_scheduler
+    user: sports_admin
+    plan: free
+    region: oregon

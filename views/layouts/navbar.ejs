@@ -1,0 +1,71 @@
+<header class="app-header">
+  <div class="container navbar-container">
+    <a href="<%= user ? '/dashboard' : '/' %>" class="nav-brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-text">SportsScheduler</span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav-menu" id="navMenu">
+      <% if (user) { %>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="/dashboard" class="nav-link <%= (typeof currentPath !== 'undefined' && currentPath === '/dashboard') ? 'active' : '' %>">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a href="/sessions/available" class="nav-link <%= (typeof currentPath !== 'undefined' && currentPath === '/sessions/available') ? 'active' : '' %>">Available Sessions</a>
+          </li>
+          <li class="nav-item">
+            <a href="/sessions/my-sessions" class="nav-link <%= (typeof currentPath !== 'undefined' && currentPath === '/sessions/my-sessions') ? 'active' : '' %>">My Sessions</a>
+          </li>
+          <li class="nav-item">
+            <a href="/sessions/joined" class="nav-link <%= (typeof currentPath !== 'undefined' && currentPath === '/sessions/joined') ? 'active' : '' %>">Joined</a>
+          </li>
+          <li class="nav-item">
+            <a href="/sports" class="nav-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/sports')) ? 'active' : '' %>">Sports</a>
+          </li>
+          <% if (user.role === 'admin') { %>
+            <li class="nav-item">
+              <a href="/reports" class="nav-link <%= (typeof currentPath !== 'undefined' && currentPath === '/reports') ? 'active' : '' %>">Reports</a>
+            </li>
+          <% } %>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="/sessions/new" class="btn btn-primary btn-sm">+ Schedule Session</a>
+
+          <div class="nav-user-dropdown">
+            <button class="user-pill-btn" id="userMenuBtn">
+              <span class="user-avatar"><%= user.name.charAt(0).toUpperCase() %></span>
+              <span class="user-name"><%= user.name %></span>
+              <span class="badge badge-<%= user.role === 'admin' ? 'admin' : 'player' %>"><%= user.role.toUpperCase() %></span>
+            </button>
+            <div class="user-menu-dropdown" id="userMenu">
+              <a href="/profile" class="user-menu-item">My Profile</a>
+              <div class="dropdown-divider"></div>
+              <form action="/auth/logout" method="POST" class="logout-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="user-menu-item logout-btn">Sign Out</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% } else { %>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="/" class="nav-link <%= currentPath === '/' ? 'active' : '' %>">Home</a>
+          </li>
+        </ul>
+        <div class="nav-actions">
+          <a href="/auth/login" class="btn btn-outline btn-sm">Sign In</a>
+          <a href="/auth/signup" class="btn btn-primary btn-sm">Get Started</a>
+        </div>
+      <% } %>
+    </nav>
+  </div>
+</header>
