@@ -3,12 +3,12 @@ const { User } = require('../models');
 
 module.exports = {
   showSignup: (req, res) => {
-    res.render('signup', {
-      title: 'Sign Up - Sports Scheduler',
-      user: null
-    });
-  },
-
+  res.render('signup', {
+    title: 'Sign Up - Sports Scheduler',
+    user: null,
+    csrfToken: req.session.csrfToken
+  });
+},
   signup: async (req, res, next) => {
     try {
       const { name, email, password, role } = req.body;
@@ -40,14 +40,16 @@ module.exports = {
       return res.redirect('/auth/signup');
     }
   },
-
+  
   showLogin: (req, res) => {
-    res.render('login', {
-      title: 'Sign In - Sports Scheduler',
-      user: null
-    });
-  },
+  console.log('CSRF Token:', req.session.csrfToken);
 
+  res.render('login', {
+    title: 'Sign In - Sports Scheduler',
+    user: null,
+    csrfToken: req.session.csrfToken
+  });
+},
   login: (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
       if (err) return next(err);
