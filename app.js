@@ -68,6 +68,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// Global Template Variables
+app.use((req, res, next) => {
+  ...
+  next();
+});
+
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.session?.csrfToken || '';
+  next();
+});
+
 // CSRF Protection
 app.use(csrfProtection);
 
