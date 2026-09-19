@@ -16,6 +16,8 @@ const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // View Engine Setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -34,7 +36,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: 'auto',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
   })
